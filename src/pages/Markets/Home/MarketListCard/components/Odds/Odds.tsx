@@ -2,7 +2,7 @@ import PositionSymbol from 'components/PositionSymbol';
 import { ODDS_COLOR, STATUS_COLOR } from 'constants/ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { convertFinalResultToResultType, formatMarketOdds } from 'utils/markets';
+import { convertFinalResultToResultType, formatMarketOdds, isDiscounted } from 'utils/markets';
 import { Status } from '../MatchStatus/MatchStatus';
 import { Container, OddsContainer, WinnerLabel } from './styled-components';
 import { AccountPosition, PositionType } from '../../../../../../types/markets';
@@ -22,6 +22,8 @@ type OddsProps = {
     accountPositions?: AccountPosition[];
     isPaused: boolean;
     isApexTopGame: boolean;
+    shortPriceImpact: number;
+    longPriceImpact: number;
 };
 
 const Odds: React.FC<OddsProps> = ({
@@ -33,6 +35,8 @@ const Odds: React.FC<OddsProps> = ({
     accountPositions,
     isPaused,
     isApexTopGame,
+    shortPriceImpact,
+    longPriceImpact,
 }) => {
     const { t } = useTranslation();
 
@@ -73,6 +77,8 @@ const Odds: React.FC<OddsProps> = ({
                             accountPositions &&
                             !!accountPositions.find((pos) => pos.amount && pos.side === PositionType.home)
                         }
+                        // long === HOME
+                        discount={isDiscounted(longPriceImpact) ? longPriceImpact : undefined}
                     />
                     {odds?.drawOdds !== 0 && (
                         <PositionSymbol
@@ -100,6 +106,8 @@ const Odds: React.FC<OddsProps> = ({
                             accountPositions &&
                             !!accountPositions.find((pos) => pos.amount && pos.side === PositionType.away)
                         }
+                        // short === AWAY
+                        discount={isDiscounted(shortPriceImpact) ? shortPriceImpact : undefined}
                     />
                 </OddsContainer>
             )}

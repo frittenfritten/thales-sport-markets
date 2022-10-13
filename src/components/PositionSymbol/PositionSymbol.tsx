@@ -2,6 +2,7 @@ import Tooltip from 'components/Tooltip';
 import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { FlexDivCentered, FlexDivColumnCentered } from 'styles/common';
 
 type SymbolProps = {
     type?: number;
@@ -16,6 +17,7 @@ type SymbolProps = {
     children?: any;
     showTooltip?: boolean;
     glow?: boolean;
+    discount?: number;
 };
 
 const PositionSymbol: React.FC<SymbolProps> = ({
@@ -26,6 +28,7 @@ const PositionSymbol: React.FC<SymbolProps> = ({
     showTooltip,
     additionalStyle,
     children,
+    discount,
 }) => {
     const { t } = useTranslation();
     return (
@@ -41,16 +44,42 @@ const PositionSymbol: React.FC<SymbolProps> = ({
                 </Symbol>
             </Container>
             {additionalText?.firstText && (
-                <AdditionalText style={additionalText?.firstTextStyle}>
-                    {additionalText?.firstText}
-                    {showTooltip && (
-                        <Tooltip
-                            overlay={<>{t('markets.zero-odds-tooltip')}</>}
-                            iconFontSize={10}
-                            customIconStyling={{ marginTop: '-10px', display: 'flex', marginLeft: '3px' }}
-                        />
+                <AdditionalTextWrapper>
+                    <AdditionalText style={additionalText?.firstTextStyle}>
+                        {additionalText?.firstText}
+                        {showTooltip && (
+                            <Tooltip
+                                overlay={<>{t('markets.zero-odds-tooltip')}</>}
+                                iconFontSize={10}
+                                customIconStyling={{ marginTop: '-10px', display: 'flex', marginLeft: '3px' }}
+                            />
+                        )}
+                    </AdditionalText>
+                    {discount && (
+                        <Discount color={symbolColor}>
+                            <DiscountAmount>{discount.toFixed(2)}%</DiscountAmount>
+                            <Tooltip
+                                overlay={
+                                    <span>
+                                        {t(`markets.discounted-per`)}{' '}
+                                        <a
+                                            href="https://github.com/thales-markets/thales-improvement-proposals/blob/main/TIPs/TIP-95.md"
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            TIP-95
+                                        </a>
+                                    </span>
+                                }
+                                component={<Icon className={`icon-exotic icon-exotic--info`} />}
+                                iconFontSize={23}
+                                marginLeft={2}
+                                top={0}
+                            />
+                        </Discount>
                     )}
-                </AdditionalText>
+                </AdditionalTextWrapper>
             )}
             <AdditionalText style={additionalText?.secondTextStyle}>{additionalText?.secondText}</AdditionalText>
         </Wrapper>
@@ -87,6 +116,26 @@ const AdditionalText = styled.span`
 
 const Symbol = styled.span<{ color?: string }>`
     color: ${(_props) => (_props?.color ? _props.color : '')};
+`;
+
+const Discount = styled(FlexDivCentered)<{ color?: string }>`
+    color: ${(_props) => (_props?.color ? _props.color : '')};
+    font-size: 14px;
+    margin-left: 3px;
+`;
+
+const DiscountAmount = styled.span`
+    margin-top: 1px;
+`;
+
+const AdditionalTextWrapper = styled(FlexDivColumnCentered)`
+    text-align: center;
+`;
+
+const Icon = styled.i`
+    font-size: 20px;
+    margin-left: 3px;
+    font-size: 14px;
 `;
 
 export default PositionSymbol;

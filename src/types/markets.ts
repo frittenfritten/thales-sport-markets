@@ -63,6 +63,8 @@ export type SportMarketInfo = {
     qualifyingStartTime?: number;
     arePostQualifyingOddsFetched: boolean;
     betType: ApexBetType;
+    longPriceImpact: number;
+    shortPriceImpact: number;
 };
 
 export type FixedMarketData = {
